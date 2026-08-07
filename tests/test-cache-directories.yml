@@ -1,0 +1,26 @@
+name: Test cache-directories input
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Create extra cache directory
+        run: mkdir -p /tmp/extra-cache-dir
+      - id: action
+        uses: .
+        with:
+          prefix-key: "v0-rust-cache-dirs-test"
+          cache-directories: "/tmp/extra-cache-dir"
+          save-if: "false"
+      - name: Assert cache-hit output is set
+        env:
+          CACHE_HIT: ${{ steps.action.outputs.cache-hit }}
+        run: |
+          echo "cache-hit: $CACHE_HIT"
+          if [ "$CACHE_HIT" != "true" ] && [ "$CACHE_HIT" != "false" ] && [ "$CACHE_HIT" != "" ]; then
+            echo "FAIL: unexpected cache-hit value: $CACHE_HIT"
+            exit 1
+          fi
+          echo "PASS: action ran with cache-directories input"

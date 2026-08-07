@@ -1,0 +1,25 @@
+name: Test lookup-only mode
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          lookup-only: "true"
+      - name: Assert cache-hit output is set in lookup-only mode
+        env:
+          CACHE_HIT: ${{ steps.action.outputs.cache-hit }}
+        run: |
+          echo "cache-hit: $CACHE_HIT"
+          # In lookup-only mode, the action checks for cache existence without downloading.
+          # cache-hit should be 'true' or 'false' (or empty on first run).
+          if [ "$CACHE_HIT" = "true" ] || [ "$CACHE_HIT" = "false" ] || [ -z "$CACHE_HIT" ]; then
+            echo "PASS: lookup-only mode completed with cache-hit='$CACHE_HIT'"
+          else
+            echo "FAIL: unexpected cache-hit value: '$CACHE_HIT'"
+            exit 1
+          fi

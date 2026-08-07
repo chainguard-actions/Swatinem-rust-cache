@@ -1,0 +1,21 @@
+name: Test basic usage
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+      - name: Assert cache-hit output is set
+        env:
+          CACHE_HIT: ${{ steps.action.outputs.cache-hit }}
+        run: |
+          echo "cache-hit: $CACHE_HIT"
+          # cache-hit should be either 'true' or 'false' (not empty)
+          if [ -z "$CACHE_HIT" ] && [ "$CACHE_HIT" != "false" ]; then
+            echo "FAIL: cache-hit output is unexpectedly empty"
+            exit 1
+          fi
+          echo "PASS: cache-hit output is '$CACHE_HIT'"
