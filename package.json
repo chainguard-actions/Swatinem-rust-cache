@@ -1,0 +1,43 @@
+{
+  "private": true,
+  "name": "rust-cache",
+  "version": "2.9.1",
+  "description": "A GitHub Action that implements smart caching for rust/cargo projects with sensible defaults.",
+  "keywords": [
+    "actions",
+    "rust",
+    "cache"
+  ],
+  "author": "Arpad Borsos <arpad.borsos@googlemail.com>",
+  "license": "LGPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Swatinem/rust-cache.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Swatinem/rust-cache/issues"
+  },
+  "funding": {
+    "url": "https://github.com/sponsors/Swatinem"
+  },
+  "homepage": "https://github.com/Swatinem/rust-cache#readme",
+  "dependencies": {
+    "@actions/buildjet-cache": "npm:github-actions.cache-buildjet@0.2.0",
+    "@actions/warpbuild-cache": "npm:github-actions.warp-cache@1.4.7",
+    "@actions/cache": "^6.0.0",
+    "@actions/core": "^3.0.0",
+    "@actions/exec": "^3.0.0",
+    "@actions/glob": "^0.6.1",
+    "@actions/io": "^3.0.2",
+    "smol-toml": "^1.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.4.0",
+    "@vercel/ncc": "^0.38.4",
+    "linefix": "^0.1.1",
+    "typescript": "5.9.3"
+  },
+  "scripts": {
+    "prepare": "ncc build --target es2020 -o dist/restore src/restore.ts && ncc build --target es2020 -o dist/save src/save.ts && linefix dist"
+  }
+}
