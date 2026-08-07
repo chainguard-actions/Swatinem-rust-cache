@@ -1,0 +1,40 @@
+name: Test env-vars input
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      MY_CUSTOM_VAR: "custom-value-123"
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Create minimal Cargo workspace
+        run: |
+          cat > Cargo.toml << 'EOF'
+          [package]
+          name = "hello"
+          version = "0.1.0"
+          edition = "2021"
+          EOF
+          mkdir -p src
+          echo 'fn main() {}' > src/main.rs
+
+      - id: action
+        uses: .
+        with:
+          env-vars: MY_CUSTOM_VAR
+          save-if: "false"
+
+      - name: Assert cache-hit output is present
+        env:
+          CACHE_HIT: ${{ steps.action.outputs.cache-hit }}
+        run: |
+          echo "cache-hit: $CACHE_HIT"
+          # cache-hit should be either 'true' or 'false' (or empty on first run)
+          if [ "$CACHE_HIT" = "true" ] || [ "$CACHE_HIT" = "false" ] || [ -z "$CACHE_HIT" ]; then
+            echo "PASS: cache-hit output is valid: '$CACHE_HIT'"
+          else
+            echo "FAIL: unexpected cache-hit value: '$CACHE_HIT'"
+            exit 1
+          fi

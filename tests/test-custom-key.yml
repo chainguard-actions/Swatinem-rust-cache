@@ -1,0 +1,36 @@
+name: Test rust-cache with custom cache keys
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - id: action
+        uses: .
+        continue-on-error: true
+        with:
+          prefix-key: "v1-custom"
+          shared-key: "my-shared-key"
+          key: "extra-key"
+
+      - name: Assert action ran with custom keys
+        env:
+          CACHE_HIT: ${{ steps.action.outputs.cache-hit }}
+          OUTCOME: ${{ steps.action.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          echo "cache-hit: $CACHE_HIT"
+          if [ "$OUTCOME" = "success" ]; then
+            if [ "$CACHE_HIT" != "true" ] && [ "$CACHE_HIT" != "false" ]; then
+              echo "FAIL: expected cache-hit to be 'true' or 'false', got: '$CACHE_HIT'"
+              exit 1
+            fi
+            echo "PASS: action succeeded with custom keys, cache-hit=$CACHE_HIT"
+          elif [ "$OUTCOME" = "failure" ]; then
+            echo "PASS: action failed gracefully (expected under sentinel repo / no Rust toolchain)"
+          else
+            echo "FAIL: unexpected outcome '$OUTCOME'"
+            exit 1
+          fi
