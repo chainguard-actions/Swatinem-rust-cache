@@ -9,15 +9,13 @@ jobs:
       - id: action
         uses: .
         with:
-          prefix-key: "v0-rust-shared-key-test"
           shared-key: "my-shared-cache-key"
-          save-if: "false"
       - name: Assert cache-hit output is set
         env:
           CACHE_HIT: ${{ steps.action.outputs.cache-hit }}
         run: |
           echo "cache-hit: $CACHE_HIT"
-          if [ "$CACHE_HIT" != "true" ] && [ "$CACHE_HIT" != "false" ] && [ "$CACHE_HIT" != "" ]; then
+          if [ "$CACHE_HIT" != "true" ] && [ "$CACHE_HIT" != "false" ] && [ -n "$CACHE_HIT" ]; then
             echo "FAIL: unexpected cache-hit value: $CACHE_HIT"
             exit 1
           fi

@@ -6,20 +6,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Create workspace target directory
-        run: mkdir -p $GITHUB_WORKSPACE/target
+      - name: Create a minimal Cargo workspace structure
+        run: |
+          mkdir -p /tmp/my-workspace/target
+          cat > /tmp/my-workspace/Cargo.toml << 'EOF'
+          [package]
+          name = "hello"
+          version = "0.1.0"
+          edition = "2021"
+          EOF
       - id: action
         uses: .
         with:
-          prefix-key: "v0-rust-workspaces-test"
-          workspaces: ". -> target"
-          save-if: "false"
+          prefix-key: "v0-rust-test-workspaces"
+          workspaces: "/tmp/my-workspace -> target"
       - name: Assert cache-hit output is set
         env:
           CACHE_HIT: ${{ steps.action.outputs.cache-hit }}
         run: |
           echo "cache-hit: $CACHE_HIT"
-          if [ "$CACHE_HIT" != "true" ] && [ "$CACHE_HIT" != "false" ] && [ "$CACHE_HIT" != "" ]; then
+          if [ "$CACHE_HIT" != "true" ] && [ "$CACHE_HIT" != "false" ] && [ -n "$CACHE_HIT" ]; then
             echo "FAIL: unexpected cache-hit value: $CACHE_HIT"
             exit 1
           fi

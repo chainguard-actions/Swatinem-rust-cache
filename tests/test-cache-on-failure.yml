@@ -9,16 +9,15 @@ jobs:
       - id: action
         uses: .
         with:
-          prefix-key: "v0-rust-cache-on-failure-test"
+          prefix-key: "v0-rust-test-cache-on-failure"
           cache-on-failure: "true"
-          save-if: "false"
       - name: Assert cache-hit output is set
         env:
           CACHE_HIT: ${{ steps.action.outputs.cache-hit }}
         run: |
           echo "cache-hit: $CACHE_HIT"
-          if [ "$CACHE_HIT" != "true" ] && [ "$CACHE_HIT" != "false" ] && [ "$CACHE_HIT" != "" ]; then
+          if [ "$CACHE_HIT" != "true" ] && [ "$CACHE_HIT" != "false" ] && [ -n "$CACHE_HIT" ]; then
             echo "FAIL: unexpected cache-hit value: $CACHE_HIT"
             exit 1
           fi
-          echo "PASS: action ran with cache-on-failure input"
+          echo "PASS: action ran with cache-on-failure=true"
