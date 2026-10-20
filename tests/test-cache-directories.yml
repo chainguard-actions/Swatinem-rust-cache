@@ -1,0 +1,40 @@
+name: Test cache-directories input
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Create extra directories to cache
+        run: |
+          mkdir -p "$RUNNER_TEMP/extra-cache-a" "$RUNNER_TEMP/extra-cache-b"
+          echo "hello" > "$RUNNER_TEMP/extra-cache-a/file.txt"
+          echo "world" > "$RUNNER_TEMP/extra-cache-b/file.txt"
+      - id: action
+        uses: .
+        with:
+          workspaces: tests/fixtures/rust-project
+          key: extra-dirs
+          cache-directories: |
+            ${{ runner.temp }}/extra-cache-a
+            ${{ runner.temp }}/extra-cache-b
+      - name: Assert cache-hit is a boolean
+        env:
+          ACTUAL: ${{ steps.action.outputs.cache-hit }}
+        run: |
+          echo "actual: $ACTUAL"
+          if [ "$ACTUAL" != "true" ] && [ "$ACTUAL" != "false" ]; then
+            echo "FAIL: expected cache-hit to be 'true' or 'false'"
+            exit 1
+          fi
+          echo "PASS"
+      - name: Assert extra directories still present
+        run: |
+          for d in extra-cache-a extra-cache-b; do
+            if [ ! -f "$RUNNER_TEMP/$d/file.txt" ]; then
+              echo "FAIL: $RUNNER_TEMP/$d/file.txt missing"
+              exit 1
+            fi
+          done
+          echo "PASS"

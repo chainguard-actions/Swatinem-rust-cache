@@ -1,0 +1,39 @@
+name: Test basic usage
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          workspaces: tests/fixtures/rust-project
+      - name: Assert cache-hit is a boolean
+        env:
+          ACTUAL: ${{ steps.action.outputs.cache-hit }}
+        run: |
+          echo "actual: $ACTUAL"
+          if [ "$ACTUAL" != "true" ] && [ "$ACTUAL" != "false" ]; then
+            echo "FAIL: expected cache-hit to be 'true' or 'false'"
+            exit 1
+          fi
+          echo "PASS"
+      - name: Assert exported env vars when caching is available
+        run: |
+          echo "CACHE_ON_FAILURE=${CACHE_ON_FAILURE:-<unset>}"
+          echo "CARGO_INCREMENTAL=${CARGO_INCREMENTAL:-<unset>}"
+          if [ -n "${CACHE_ON_FAILURE:-}" ]; then
+            if [ "$CACHE_ON_FAILURE" != "false" ]; then
+              echo "FAIL: expected CACHE_ON_FAILURE=false by default"
+              exit 1
+            fi
+            if [ "${CARGO_INCREMENTAL:-}" != "0" ]; then
+              echo "FAIL: expected CARGO_INCREMENTAL=0"
+              exit 1
+            fi
+          else
+            echo "Cache service not available; env vars not exported (expected in that case)"
+          fi
+          echo "PASS"

@@ -1,0 +1,35 @@
+name: Test lookup-only with save disabled
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          workspaces: tests/fixtures/rust-project -> target
+          lookup-only: "true"
+          save-if: "false"
+          cache-targets: "false"
+          cache-bin: "false"
+          add-job-id-key: "false"
+          add-rust-environment-hash-key: "false"
+      - name: Assert cache-hit is a boolean
+        env:
+          ACTUAL: ${{ steps.action.outputs.cache-hit }}
+        run: |
+          echo "actual: $ACTUAL"
+          if [ "$ACTUAL" != "true" ] && [ "$ACTUAL" != "false" ]; then
+            echo "FAIL: expected cache-hit to be 'true' or 'false'"
+            exit 1
+          fi
+          echo "PASS"
+      - name: Assert lookup-only did not create target dir
+        run: |
+          if [ -d tests/fixtures/rust-project/target ]; then
+            echo "FAIL: lookup-only should not restore a target directory"
+            exit 1
+          fi
+          echo "PASS"

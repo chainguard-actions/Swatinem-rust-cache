@@ -1,0 +1,35 @@
+name: Test cache-on-failure input
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          workspaces: tests/fixtures/rust-project
+          cache-on-failure: "TRUE"
+          prefix-key: v1-test
+          shared-key: shared-test
+          key: extra-key
+          env-vars: "FOO BAR"
+      - name: Assert cache-hit is a boolean
+        env:
+          ACTUAL: ${{ steps.action.outputs.cache-hit }}
+        run: |
+          echo "actual: $ACTUAL"
+          if [ "$ACTUAL" != "true" ] && [ "$ACTUAL" != "false" ]; then
+            echo "FAIL: expected cache-hit to be 'true' or 'false'"
+            exit 1
+          fi
+          echo "PASS"
+      - name: Assert CACHE_ON_FAILURE exported as true when caching is available
+        run: |
+          echo "CACHE_ON_FAILURE=${CACHE_ON_FAILURE:-<unset>}"
+          if [ -n "${CACHE_ON_FAILURE:-}" ] && [ "$CACHE_ON_FAILURE" != "true" ]; then
+            echo "FAIL: expected CACHE_ON_FAILURE=true (case-insensitive input)"
+            exit 1
+          fi
+          echo "PASS"
