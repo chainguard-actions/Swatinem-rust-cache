@@ -12,6 +12,7 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 | v2.8.2 | [`v2.8.2`](https://github.com/chainguard-actions/Swatinem-rust-cache/tree/v2.8.2) | [`779680d`](https://github.com/Swatinem/rust-cache/commit/779680da715d629ac1d338a641029a2f4372abb5) |
 | v2.9.1 | [`v2.9.1`](https://github.com/chainguard-actions/Swatinem-rust-cache/tree/v2.9.1) | [`c193711`](https://github.com/Swatinem/rust-cache/commit/c19371144df3bb44fab255c43d04cbc2ab54d1c4) |
 | v2.9.2 | [`v2.9.2`](https://github.com/chainguard-actions/Swatinem-rust-cache/tree/v2.9.2) | [`6323deb`](https://github.com/Swatinem/rust-cache/commit/6323deb102c322ba6fcbdcafc7e3dddab59af2b6) |
+| v2.9.3 | [`v2.9.3`](https://github.com/chainguard-actions/Swatinem-rust-cache/tree/v2.9.3) | [`d1527c8`](https://github.com/Swatinem/rust-cache/commit/d1527c8f67ef9af357290475d4af4b0fab8f12e0) |
 
 ## Privacy
 
