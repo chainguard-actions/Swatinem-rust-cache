@@ -4,8 +4,13 @@
   "version": "v2.9.3",
   "commit_sha": "d1527c8f67ef9af357290475d4af4b0fab8f12e0",
   "url": "https://github.com/Swatinem/rust-cache",
-  "policy_sha": "d636be7e43ef829af6e853da6b3c7566db9f72fe",
+  "policy_sha": "374911c4be584df24e6da57af2d990570ef0f859",
   "test_policy_sha": "843adf9e4b8f85d0c08b27b9d0b09dd094b54702",
   "test_agent_version": "2",
-  "harden_agent_version": "2"
+  "harden_agent_version": "2",
+  "dist_artifact": {
+    "gcs_uri": "gs://patch-actions-node-artifacts/dist-artifacts/Swatinem/rust-cache/v2.9.3/sha256-09d4d27e49a137ca2e6a321a278d7029ae217a2c6e50da865229960a103c2f46.tar.gz",
+    "sha256": "09d4d27e49a137ca2e6a321a278d7029ae217a2c6e50da865229960a103c2f46",
+    "size_bytes": 2092297
+  }
 }
